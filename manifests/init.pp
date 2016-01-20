@@ -53,7 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
-  $aptly_gpg_pass  = undef,
+  $aptly_gpg_pass  = {},
 ) {
 
   validate_absolute_path($config_file)
