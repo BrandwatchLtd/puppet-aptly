@@ -70,12 +70,6 @@ class aptly (
     validate_string($config_contents)
   }
 
-  if $gpg_pass {
-      notify { 'gpg_pass':
-        name => "my gpg_pass is ${gpg_pass}",
-      }
-  }
-
   if $jessie_sync {
     file { "/usr/bin/jessie_mirror_aptly_sync.sh":
         content => template('aptly/usr/bin/jessie_mirror_aptly_sync.sh.erb'),
