@@ -28,7 +28,3 @@ date=$(date +%s)
 /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -component="main" jessie-updates jessie-main_security-${date}-merged
 /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -component="contrib" jessie-updates jessie-contrib_security-${date}-merged
 /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -component="non-free" jessie-updates jessie-nonfree_security-${date}-merged
-
-# ruby syntaxing:
-<%= @gpg_pass -%>
-<%= @gpg_pass %>
