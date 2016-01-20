@@ -53,6 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
+  $aptly_gpg_key   = '',
 ) {
 
   validate_absolute_path($config_file)
@@ -62,6 +63,7 @@ class aptly (
   validate_bool($repo)
   validate_string($key_server)
   validate_string($user)
+  validate_string($aptly_gpg_key)
 
   if $config_contents {
     validate_string($config_contents)
