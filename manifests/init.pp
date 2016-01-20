@@ -78,7 +78,7 @@ class aptly (
 
   if $jessie_sync {
     file { "/usr/bin/jessie_mirror_aptly_sync.sh":
-        content => template('usr/bin/jessie_mirror_aptly_sync.sh.erb'),
+        content => template('aptly/usr/bin/jessie_mirror_aptly_sync.sh.erb'),
     }
   }
 
