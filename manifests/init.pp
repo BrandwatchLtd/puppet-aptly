@@ -53,6 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
+  $jessie_sync     = false,
   $gpg_pass        = hiera('aptly::gpg_pass'),
 ) {
 
@@ -73,6 +74,12 @@ class aptly (
       notify { 'gpg_pass':
         name => "my gpg_pass is ${gpg_pass}",
       }
+  }
+
+  if $jessie_sync {
+    file { "/usr/bin/jessie_mirror_aptly_sync.sh":
+        content => template('usr/bin/jessie_mirror_aptly_sync.sh.erb'),
+    }
   }
 
   if $repo {
