@@ -63,7 +63,7 @@ class aptly (
   validate_bool($repo)
   validate_string($key_server)
   validate_string($user)
-  validate_string($aptly_gpg_key)
+  validate_string($aptly_gpg_pass)
 
   if $config_contents {
     validate_string($config_contents)
