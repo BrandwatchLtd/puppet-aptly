@@ -53,7 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
-  $aptly_gpg_pass   = hiera('aptly::aptly_gpg_pass', ''),
+  $aptly_gpg_pass  = undef,
 ) {
 
   validate_absolute_path($config_file)
@@ -100,4 +100,5 @@ class aptly (
   # Hiera support
   create_resources('::aptly::repo', $aptly_repos)
   create_resources('::aptly::mirror', $aptly_mirrors)
+  create_resources('::aptly::gpg_pass', $aptly_gpg_pass)
 }
