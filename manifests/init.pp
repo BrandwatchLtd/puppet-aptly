@@ -53,7 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
-  $gpg_pass        = hiera('aptly::gpg_pass', ''),
+  $gpg_pass        = hiera('aptly::gpg_pass'),
 ) {
 
   validate_absolute_path($config_file)
@@ -71,7 +71,7 @@ class aptly (
 
   if $gpg_pass {
       notify { 'gpg_pass':
-        name => "my gpg_pass is ${::gpg_pass}",
+        name => "my gpg_pass is ${gpg_pass}",
       }
   }
 
