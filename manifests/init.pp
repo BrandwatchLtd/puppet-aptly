@@ -53,7 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
-  $aptly_gpg_key   = '',
+  $aptly_gpg_key   = hiera('aptly::aptly_gpg_key', ''),
 ) {
 
   validate_absolute_path($config_file)
