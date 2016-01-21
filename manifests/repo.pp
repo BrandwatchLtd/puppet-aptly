@@ -77,13 +77,7 @@ define aptly::repo(
       File['/etc/aptly.conf'],
     ],
   }
-  if $gitlfssync == false {
-    vcsrepo { "aptly_repo_gitlfssync-${title}":
-      ensure   => latest,
-      provider => git,
-      source   => "${gitsource}",
-      user     => "${gituser}"
-    },
+  if $gitlfssync == true {
     exec{ "aptly_repo_gitlfssync-${title}":
       command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
       unless  => "${aptly_cmd} show ${title} >/dev/null",
