@@ -34,7 +34,7 @@ define aptly::repo(
   validate_string($comment)
   validate_string($component)
   validate_string($distribution)
-  validate_boolean($gitlfssync)
+  validate_bool($gitlfssync)
   validate_string($gitcmd)
   validate_string($gitsource)
   validate_string($gituser)
