@@ -68,6 +68,15 @@ define aptly::repo(
     $distribution_arg = "-distribution=\"${distribution}\""
   }
 
+  if ! empty($gitsource) {
+    vcsrepo{ "aptly_repo_gitlfssrepo-${title}":
+      ensure   => latest,
+      provider => git,
+      source   => "${gitsource}",
+      revision => master,
+    }
+  }
+
   exec{ "aptly_repo_create-${title}":
     command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
     unless  => "${aptly_cmd} show ${title} >/dev/null",
@@ -77,6 +86,7 @@ define aptly::repo(
       File['/etc/aptly.conf'],
     ],
   }
+
   if $gitlfssync == true {
     exec{ "aptly_repo_gitlfssync-${title}":
       command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
@@ -88,4 +98,5 @@ define aptly::repo(
       ],
     }
   }
+
 }
