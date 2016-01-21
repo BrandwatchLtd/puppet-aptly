@@ -25,11 +25,19 @@ define aptly::repo(
   $comment       = '',
   $component     = '',
   $distribution  = '',
+  $gitlfssync    = false,
+  $gitcmd        = 'git'.
+  $gitsource     = '',
+  $gituser       = ''
 ){
   validate_array($architectures)
   validate_string($comment)
   validate_string($component)
   validate_string($distribution)
+  validate_boolean($gitlfssync)
+  validate_string($gitcmd)
+  validate_string($gitsource)
+  validate_string($gituser)
 
   include ::aptly
 
@@ -68,5 +76,22 @@ define aptly::repo(
       Package['aptly'],
       File['/etc/aptly.conf'],
     ],
+  }
+  if $gitlfssync {
+    vcsrepo { "aptly_repo_gitlfssync-${title}":
+      ensure   => latest,
+      provider => git,
+      source   => "${gitsource}",
+      user     => "${gituser}"
+    },
+    exec{ "aptly_repo_gitlfssync-${title}":
+      command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
+      unless  => "${aptly_cmd} show ${title} >/dev/null",
+      user    => $::aptly::user,
+      require => [
+        Package['aptly'],
+        File['/etc/aptly.conf'],
+      ],
+    }
   }
 }
