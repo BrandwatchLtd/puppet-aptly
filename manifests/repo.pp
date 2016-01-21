@@ -77,7 +77,7 @@ define aptly::repo(
       File['/etc/aptly.conf'],
     ],
   }
-  if $gitlfssync {
+  if $gitlfssync == false {
     vcsrepo { "aptly_repo_gitlfssync-${title}":
       ensure   => latest,
       provider => git,
