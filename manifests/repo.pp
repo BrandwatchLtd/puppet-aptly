@@ -26,7 +26,7 @@ define aptly::repo(
   $component     = '',
   $distribution  = '',
   $gitlfssync    = false,
-  $gitcmd        = 'git'.
+  $gitcmd        = 'git',
   $gitsource     = '',
   $gituser       = ''
 ){
