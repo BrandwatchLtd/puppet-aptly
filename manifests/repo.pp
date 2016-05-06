@@ -69,7 +69,7 @@ define aptly::repo(
   }
 
   if ! empty($gitsource) {
-    vcsrepo{ "aptly_repo_gitlfssrepo-${title}":
+    vcsrepo{ "aptly_repo_gitlfsrepo-${title}":
       ensure   => latest,
       provider => git,
       source   => "${gitsource}",
@@ -89,12 +89,12 @@ define aptly::repo(
 
   if $gitlfssync == true {
     exec{ "aptly_repo_gitlfssync-${title}":
-      command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
-      unless  => "${aptly_cmd} show ${title} >/dev/null",
+      command => "${git_cmd} ",
+      unless  => "${git_cmd} show ${title} >/dev/null",
       user    => $::aptly::user,
       require => [
-        Package['aptly'],
-        File['/etc/aptly.conf'],
+        Vcsrepo["aptly_repo_gitlfsrepo-${title}",
+        Package["git-lfs"]
       ],
     }
   }
