@@ -25,7 +25,6 @@ define aptly::repo(
   $comment       = '',
   $component     = '',
   $distribution  = '',
-  $gitlfssync    = false,
   $gitcmd        = 'git',
   $gitsource     = '',
   $gituser       = ''
@@ -34,7 +33,6 @@ define aptly::repo(
   validate_string($comment)
   validate_string($component)
   validate_string($distribution)
-  validate_bool($gitlfssync)
   validate_string($gitcmd)
   validate_string($gitsource)
   validate_string($gituser)
@@ -68,15 +66,6 @@ define aptly::repo(
     $distribution_arg = "-distribution=\"${distribution}\""
   }
 
-  if ! empty($gitsource) {
-    vcsrepo{ "aptly_repo_gitlfsrepo-${title}":
-      ensure   => latest,
-      provider => git,
-      source   => "${gitsource}",
-      revision => master,
-    }
-  }
-
   exec{ "aptly_repo_create-${title}":
     command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
     unless  => "${aptly_cmd} show ${title} >/dev/null",
@@ -85,18 +74,6 @@ define aptly::repo(
       Package['aptly'],
       File['/etc/aptly.conf'],
     ],
-  }
-
-  if $gitlfssync == true {
-    exec{ "aptly_repo_gitlfssync-${title}":
-      command => "${git_cmd} ",
-      unless  => "${git_cmd} show ${title} >/dev/null",
-      user    => $::aptly::user,
-      require => [
-        Vcsrepo["aptly_repo_gitlfsrepo-${title}",
-        Package["git-lfs"]
-      ],
-    }
   }
 
 }
