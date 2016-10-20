@@ -73,6 +73,7 @@ class aptly (
   if $mirror_sync {
     file { "/usr/local/sbin/aptly_mirror_sync.sh":
       content => template('aptly/usr/local/sbin/aptly_mirror_sync.sh.erb'),
+      mode    => '0750',
     }
   }
 
