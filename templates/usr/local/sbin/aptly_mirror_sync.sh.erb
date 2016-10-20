@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-<<<<<<< HEAD
 if [[ $# -ne 1 ]]; then
   echo "No args set!"
   exit 1
@@ -32,32 +31,3 @@ date=$(date +%s)
 /usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="main" ${mirror_name}-updates ${mirror_name}-main_security-${date}-merged
 /usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="contrib" ${mirror_name}-updates ${mirror_name}-contrib_security-${date}-merged
 /usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="non-free" ${mirror_name}-updates ${mirror_name}-nonfree_security-${date}-merged
-=======
-date=$(date +%s)
-# update <%= @mirror_name %> mirror
-/usr/bin/aptly mirror update <%= @mirror_name %>
-# create new snapshot for <%= @mirror_name %> mirror
-/usr/bin/aptly snapshot create <%= @mirror_name %>-main-${date} from mirror <%= @mirror_name %>
-/usr/bin/aptly snapshot create <%= @mirror_name %>-contrib-${date} from mirror <%= @mirror_name %>
-/usr/bin/aptly snapshot create <%= @mirror_name %>-nonfree-${date} from mirror <%= @mirror_name %>
-# create new snapshot for <%= @mirror_name %>-security mirror
-/usr/bin/aptly snapshot create <%= @mirror_name %>-main_security-${date} from mirror security
-/usr/bin/aptly snapshot create <%= @mirror_name %>-contrib_security-${date} from mirror security
-/usr/bin/aptly snapshot create <%= @mirror_name %>-nonfree_security-${date} from mirror security
-# snapshot merges for <%= @mirror_name %> mirror
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-main-${date}-merged <%= @mirror_name %>-main <%= @mirror_name %>-main-${date}
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-contrib-${date}-merged <%= @mirror_name %>-contrib <%= @mirror_name %>-contrib-${date}
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-nonfree-${date}-merged <%= @mirror_name %>-nonfree <%= @mirror_name %>-nonfree-${date}
-# snapshot merges for <%= @mirror_name %>-security mirror
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-main_security-${date}-merged <%= @mirror_name %>-main_security <%= @mirror_name %>-main_security-${date}
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-contrib_security-${date}-merged <%= @mirror_name %>-contrib_security <%= @mirror_name %>-contrib_security-${date}
-/usr/bin/aptly snapshot merge <%= @mirror_name %>-nonfree_security-${date}-merged <%= @mirror_name %>-nonfree_security <%= @mirror_name %>-nonfree_security-${date}
-# publish <%= @mirror_name %> mirror
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="main" <%= @mirror_name %> <%= @mirror_name %>-main-${date}-merged
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="contrib" <%= @mirror_name %> <%= @mirror_name %>-contrib-${date}-merged
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="non-free" <%= @mirror_name %> <%= @mirror_name %>-nonfree-${date}-merged
-# publish <%= @mirror_name %>-security mirror
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="main" <%= @mirror_name %>-updates <%= @mirror_name %>-main_security-${date}-merged
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="contrib" <%= @mirror_name %>-updates <%= @mirror_name %>-contrib_security-${date}-merged
-/usr/bin/aptly publish switch -batch -passphrase="<%= @gpg_pass -%>" -component="non-free" <%= @mirror_name %>-updates <%= @mirror_name %>-nonfree_security-${date}-merged
->>>>>>> 6dda43a... adding support sync of multiple mirrors
