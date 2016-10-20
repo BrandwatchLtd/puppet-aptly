@@ -53,7 +53,7 @@ class aptly (
   $user            = 'root',
   $aptly_repos     = {},
   $aptly_mirrors   = {},
-  $jessie_sync     = false,
+  $mirror_sync     = false,
   $gpg_pass        = hiera('aptly::gpg_pass'),
 ) {
 
@@ -70,9 +70,9 @@ class aptly (
     validate_string($config_contents)
   }
 
-  if $jessie_sync {
-    file { "/usr/bin/jessie_mirror_aptly_sync.sh":
-        content => template('aptly/usr/bin/jessie_mirror_aptly_sync.sh.erb'),
+  if $mirror_sync {
+    file { "/usr/local/sbin/aptly_mirror_sync.sh":
+      content => template('aptly/usr/local/sbin/aptly_mirror_sync.sh.erb'),
     }
   }
 

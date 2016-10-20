@@ -45,6 +45,11 @@
 #   Boolean to control whether Aptly should also download .udeb packages.
 #   Default: false
 #
+# [*sync*]
+#   Boolean to control whether Aptly should use the mirror sync script 
+#   triggered via cron - this means a dependancy on the puppetlabs cron module
+#   Default: false
+#
 define aptly::mirror (
   $location,
   $key           = undef,
@@ -54,6 +59,7 @@ define aptly::mirror (
   $repos         = [],
   $with_sources  = false,
   $with_udebs    = false,
+  $sync          = false,
 ) {
   validate_string($keyserver)
   validate_array($repos)
@@ -113,5 +119,20 @@ define aptly::mirror (
     unless  => "${aptly_cmd} show ${title} >/dev/null",
     user    => $::aptly::user,
     require => $exec_aptly_mirror_create_require,
+  }
+
+  if $sync {
+    include cron
+    $minute = fqdn_rand(60, $title)
+    cron::job {
+      "cron_aptly_mirror_sync_${title}":
+        minute      => $minute,
+        hour        => '1',
+        date        => '*',
+        month       => '*',
+        weekday     => '*',
+        user        => 'root',
+        command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
+    }
   }
 }
