@@ -19,12 +19,16 @@
 #
 # [*distribution*]
 #   Specify the default distribution to be used when publishing this repository.
+#
+# [*autopublish*]
+#   Automatically publish empty repo when created, to allow easy update later.
 
 define aptly::repo(
   $architectures = [],
   $comment       = '',
   $component     = '',
   $distribution  = '',
+  $autopublish   = false,
   $gitcmd        = 'git',
   $gitsource     = '',
   $gituser       = ''
@@ -33,6 +37,7 @@ define aptly::repo(
   validate_string($comment)
   validate_string($component)
   validate_string($distribution)
+  validate_bool($autopublish)
   validate_string($gitcmd)
   validate_string($gitsource)
   validate_string($gituser)
@@ -66,8 +71,14 @@ define aptly::repo(
     $distribution_arg = "-distribution=\"${distribution}\""
   }
 
+  if $autopublish {
+    $execute_command = "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title} && ${::aptly::aptly_cmd} publish repo -skip-signing ${architectures_arg} ${component_arg} ${distribution_arg} ${title}"
+  } else {
+    $execute_command = "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}"
+  }
+
   exec{ "aptly_repo_create-${title}":
-    command => "${aptly_cmd} create ${architectures_arg} ${comment_arg} ${component_arg} ${distribution_arg} ${title}",
+    command => $execute_command,
     unless  => "${aptly_cmd} show ${title} >/dev/null",
     user    => $::aptly::user,
     require => [
