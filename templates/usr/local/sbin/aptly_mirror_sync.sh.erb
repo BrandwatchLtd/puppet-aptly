@@ -19,3 +19,9 @@ if [[ $? -ne 0 ]]; then
 else
   /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name} ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
 fi
+
+# remove old snapshots related to this mirror
+for snapshot in $( /usr/bin/aptly snapshot list -raw=true | grep -v ${date} | egrep "^${mirror_name}-" ); do /usr/bin/aptly snapshot drop $snapshot; done
+
+# update installer packages which aren't handled by aptly
+/usr/bin/rsync --recursive --times --links --hard-links --delete --delete-after rsync://ftp.uk.debian.org/debian/dists/${mirror_name}/main/installer-amd64 /var/lib/aptly/public/dists/${mirror_name}/main/
