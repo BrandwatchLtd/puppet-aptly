@@ -60,6 +60,7 @@ define aptly::mirror (
   $with_sources  = false,
   $with_udebs    = false,
   $sync          = false,
+  $nondebian	 = false,
 ) {
   validate_string($keyserver)
   validate_array($repos)
@@ -124,15 +125,28 @@ define aptly::mirror (
   if $sync {
     include cron
     $minute = fqdn_rand(60, $title)
-    cron::job {
-      "cron_aptly_mirror_sync_${title}":
-        minute      => $minute,
-        hour        => '1',
-        date        => '*',
-        month       => '*',
-        weekday     => '*',
-        user        => 'root',
-        command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
+    if $nondebian {
+      cron::job {
+        "cron_aptly_mirror_sync_${title}":
+          minute      => $minute,
+          hour        => '1',
+          date        => '*',
+          month       => '*',
+          weekday     => '*',
+          user        => 'root',
+          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
+      }
+    } else {
+      cron::job {
+        "cron_aptly_mirror_sync_${title}":
+          minute      => $minute,
+          hour        => '1',
+          date        => '*',
+          month       => '*',
+          weekday     => '*',
+          user        => 'root',
+          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} ${components_arg} 2>/dev/null";
+      }
     }
   }
 }
