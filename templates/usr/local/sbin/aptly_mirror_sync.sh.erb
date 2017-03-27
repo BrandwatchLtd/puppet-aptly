@@ -1,27 +1,55 @@
 #!/usr/bin/env bash
-if [[ $# -ne 1 ]]; then
+
+if [[ $# -lt 1 ]]; then
   echo "No args set!"
   exit 1
 fi
+
 mirror_name=$1
 date=$(date +%s)
+
+# strip the first argument so that we can use the list of components later
+shift
+components="$@"
+
 # update ${mirror_name} mirror
 /usr/bin/aptly mirror update ${mirror_name}
+
 # create new snapshot for ${mirror_name} mirror
-/usr/bin/aptly snapshot create ${mirror_name}-main-${date} from mirror ${mirror_name}
-/usr/bin/aptly snapshot create ${mirror_name}-contrib-${date} from mirror ${mirror_name}
-/usr/bin/aptly snapshot create ${mirror_name}-nonfree-${date} from mirror ${mirror_name}
+if [[ $# -eq 0 ]]; then
+  /usr/bin/aptly snapshot create ${mirror_name}-main-${date} from mirror ${mirror_name}
+  /usr/bin/aptly snapshot create ${mirror_name}-contrib-${date} from mirror ${mirror_name}
+  /usr/bin/aptly snapshot create ${mirror_name}-nonfree-${date} from mirror ${mirror_name}
+else
+  for component in ${components}; do
+    /usr/bin/aptly snapshot create ${mirror_name}-${component}-${date} from mirror ${mirror_name}
+  done
+fi
 
 # check if aptly has already published this mirror
 /usr/bin/aptly publish list | grep -q "${mirror_name}"
 if [[ $? -ne 0 ]]; then
-  /usr/bin/aptly publish snapshot -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
+  if [[ $# -eq 0 ]]; then
+    /usr/bin/aptly publish snapshot -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
+  else
+    for component in ${components}; do
+      /usr/bin/aptly publish snapshot -passphrase="<%= @gpg_pass -%>" -batch=true -component=${component} ${mirror_name}-${component}-${date} ${mirror_name}
+    done
+  fi
 else
-  /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name} ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
+  if [[ $# -eq 0 ]]; then
+    /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name} ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
+  else
+    for component in ${components}; do
+      /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=${component} ${mirror_name}-${component}-${date} ${mirror_name}
+    done
+  fi
 fi
 
 # remove old snapshots related to this mirror
 for snapshot in $( /usr/bin/aptly snapshot list -raw=true | grep -v ${date} | egrep "^${mirror_name}-" ); do /usr/bin/aptly snapshot drop $snapshot; done
 
 # update installer packages which aren't handled by aptly
-/usr/bin/rsync --recursive --times --links --hard-links --delete --delete-after rsync://ftp.uk.debian.org/debian/dists/${mirror_name}/main/installer-amd64 /var/lib/aptly/public/dists/${mirror_name}/main/
+if [[ $# -eq 0 ]]; then
+  /usr/bin/rsync --recursive --times --links --hard-links --delete --delete-after rsync://ftp.uk.debian.org/debian/dists/${mirror_name}/main/installer-amd64 /var/lib/aptly/public/dists/${mirror_name}/main/
+fi
