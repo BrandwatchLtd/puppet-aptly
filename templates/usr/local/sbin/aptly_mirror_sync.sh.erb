@@ -41,7 +41,7 @@ else
     /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=non-free,main,contrib ${mirror_name} ${mirror_name}-nonfree-${date} ${mirror_name}-main-${date} ${mirror_name}-contrib-${date}
   else
     for component in ${components}; do
-      /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=${component} ${mirror_name}-${component}-${date} ${mirror_name}
+      /usr/bin/aptly publish switch -passphrase="<%= @gpg_pass -%>" -batch=true -component=${component} $(aptly mirror show ${mirror_name} | grep Distribution | awk {'print $2'}) ${mirror_name} ${mirror_name}-${component}-${date}
     done
   fi
 fi

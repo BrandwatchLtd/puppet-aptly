@@ -60,6 +60,7 @@ define aptly::mirror (
   $with_sources  = false,
   $with_udebs    = false,
   $sync          = false,
+  $nondebian	 = false,
 ) {
   validate_string($keyserver)
   validate_array($repos)
@@ -84,6 +85,12 @@ define aptly::mirror (
   } else {
     $components = join($repos, ' ')
     $components_arg = " ${components}"
+  }
+
+  if $nondebian {
+    $sync_args = "${title} ${component_args}"
+  } else {
+    $sync_args = "${title}"
   }
 
   if $key {
@@ -132,7 +139,7 @@ define aptly::mirror (
         month       => '*',
         weekday     => '*',
         user        => 'root',
-        command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
+        command     => "/usr/local/sbin/aptly_mirror_sync.sh ${sync_args} 2>/dev/null";
     }
   }
 }
