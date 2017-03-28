@@ -134,7 +134,7 @@ define aptly::mirror (
           month       => '*',
           weekday     => '*',
           user        => 'root',
-          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
+          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} ${components_arg} 2>/dev/null";
       }
     } else {
       cron::job {
@@ -145,7 +145,7 @@ define aptly::mirror (
           month       => '*',
           weekday     => '*',
           user        => 'root',
-          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} ${components_arg} 2>/dev/null";
+          command     => "/usr/local/sbin/aptly_mirror_sync.sh ${title} 2>/dev/null";
       }
     }
   }
