@@ -87,12 +87,6 @@ define aptly::mirror (
     $components_arg = " ${components}"
   }
 
-  if $nondebian {
-    $sync_args = "${title} ${component_args}"
-  } else {
-    $sync_args = "${title}"
-  }
-
   if $key {
     if is_array($key) {
       $key_string = join($key, "' '")
@@ -129,6 +123,11 @@ define aptly::mirror (
   }
 
   if $sync {
+    if $nondebian {
+      $sync_args = "${title} ${component_args}"
+    } else {
+      $sync_args = "${title}"
+    }
     include cron
     $minute = fqdn_rand(60, $title)
     cron::job {
