@@ -73,12 +73,6 @@ define aptly::mirror (
   $gpg_cmd = '/usr/bin/gpg --no-default-keyring --keyring trustedkeys.gpg'
   $aptly_cmd = "${::aptly::aptly_cmd} mirror"
 
-  if $nondebian {
-    $sync_args = "${title} ${component_args}"
-  } else {
-    $sync_args = "${title}"
-  }
-
   if empty($architectures) {
     $architectures_arg = ''
   } else{
@@ -91,6 +85,12 @@ define aptly::mirror (
   } else {
     $components = join($repos, ' ')
     $components_arg = " ${components}"
+  }
+
+  if $nondebian {
+    $sync_args = "${title} ${component_args}"
+  } else {
+    $sync_args = "${title}"
   }
 
   if $key {
