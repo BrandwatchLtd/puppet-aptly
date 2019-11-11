@@ -83,7 +83,7 @@ class aptly (
       release    => 'squeeze',
       repos      => 'main',
       key        => {
-        id       => 'ED75B5A4483DA07C',
+        id       => '26DA9D8630302E0B86A7A2CBED75B5A4483DA07C',
         server   => 'pool.sks-keyservers.net',
       },
     }
